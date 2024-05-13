@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -37,6 +38,7 @@ public class MybatisConfigSourceOne {
     @Value("${spring.datasource.one.driverClassName}")
     private String driverClassName;
     @Bean
+    @Primary
     public DataSource dataSourceOne() {
         log.info("开始初始化One数据源");
         DruidDataSource datasource = new DruidDataSource();
@@ -47,6 +49,7 @@ public class MybatisConfigSourceOne {
         return datasource;
     }
     @Bean("sqlSessionFactoryOne")
+    @Primary
     public SqlSessionFactory sqlSessionFactoryOne(@Qualifier("dataSourceOne") DataSource dataSource) throws Exception {
         // 创建 SqlSessionFactoryBean 对象
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
@@ -61,16 +64,19 @@ public class MybatisConfigSourceOne {
     }
 
     @Bean
+    @Primary
     public SqlSessionTemplate sqlSessionTemplateOne(@Qualifier("sqlSessionFactoryOne") SqlSessionFactory  sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
     @Bean
+    @Primary
     public PlatformTransactionManager annotationDrivenTransactionManagerOne(@Qualifier("dataSourceOne") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
     @Bean
+    @Primary
     public MybatisPlusInterceptor mybatisPlusInterceptorOne() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
